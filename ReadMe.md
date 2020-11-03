@@ -1,7 +1,8 @@
 <h1>LEAGUE OF MACHINE LEARNING</h1>
 
-Here machine learning will be used to create a predictive model to determine the outcome of the popular game 'League of Legends'
+Here machine learning will be used to create a predictive model for determining the outcome of the popular online videogame 'League of Legends'
 
 ---------Contributors---------
+
 Michael Bone (bonem97), Andrew Giermak (AndrewGiermak), David Lynch (eurogigolo), Alexander Rosati (ChessRosati)
 
