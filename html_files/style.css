@@ -32,12 +32,11 @@ p {
 }
 
 .bs-linebreak {
-  height:10px;
+  height:0px;
 }
 
 img {
-  display: block;
-  max-width: 100%;
+  max-width: 67%;
   height: auto;
 }
 
