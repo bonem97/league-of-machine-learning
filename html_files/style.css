@@ -38,6 +38,7 @@ p {
 img {
   max-width: 67%;
   height: auto;
+  margin-right: 6px;
 }
 
 #footer {
