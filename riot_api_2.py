@@ -15,63 +15,65 @@ my_region = 'na1'
 
 
 #pulls a players stats by username/region
-lol_watcher = LolWatcher(key)
-username = input('What is your username? ')
-me = lol_watcher.summoner.by_name('na1', username)
+def ten_minute_data(username):
+    lol_watcher = LolWatcher(key)
+    me = lol_watcher.summoner.by_name('na1', username)
 
 
-my_matches = lol_watcher.match.matchlist_by_account(my_region, me['accountId'])
-last_match = my_matches['matches'][3]
-match_detail = lol_watcher.match.by_id(my_region, last_match['gameId'])
+    my_matches = lol_watcher.match.matchlist_by_account(my_region, me['accountId'])
+    last_match = my_matches['matches'][0]
+    match_detail = lol_watcher.match.by_id(my_region, last_match['gameId'])
 
-participants = []
+    participants = []
 
-for row in match_detail['participants']:
-    participants_row = {}
+    for row in match_detail['participants']:
+        participants_row = {}
 
-    if row['stats']['win'] == True:
-        participants_row['win'] = 1
-    else:
-        participants_row['win'] = 0
+        if row['stats']['win'] == True:
+            participants_row['win'] = 1
+        else:
+            participants_row['win'] = 0
 
-    if row['stats']['firstBloodKill'] == True:    
-        participants_row['FirstBlood'] = 1
-    else:
-        participants_row['FirstBlood'] = 0
+        if row['stats']['firstBloodKill'] == True:    
+            participants_row['FirstBlood'] = 1
+        else:
+            participants_row['FirstBlood'] = 0
 
-    if row['teamId'] == 100:
-        participants_row['team'] = 'blue'
-    else:
-        participants_row['team'] = 'red'
+        if row['teamId'] == 100:
+            participants_row['team'] = 'blue'
+        else:
+            participants_row['team'] = 'red'
 
-    participants_row['csPerMinute'] = row['timeline']['creepsPerMinDeltas']['0-10']
-    participants_row['goldPerMin'] = row['timeline']['goldPerMinDeltas']['0-10']
-    participants_row['xpPerMin'] = row['timeline']['xpPerMinDeltas']['0-10']
-    participants.append(participants_row)
+        participants_row['csPerMinute'] = row['timeline']['creepsPerMinDeltas']['0-10']
+        participants_row['goldPerMin'] = row['timeline']['goldPerMinDeltas']['0-10']
+        participants_row['xpPerMin'] = row['timeline']['xpPerMinDeltas']['0-10']
+        participants.append(participants_row)
+        
+    df = pd.DataFrame(participants)
+
+
+
+    df2 = pd.DataFrame({
+        "blueFirstBlood" : [df[0:5]['FirstBlood'].max()],
+        "redFirstBlood" : [df[5:10]['FirstBlood'].max()],
+        "blueCSPerMin" : [df[0:5]['csPerMinute'].sum()],
+        "redCSPerMin" : [df[5:10]['csPerMinute'].sum()],
+        "blueGoldPerMin" : [df[0:5]['goldPerMin'].sum()],
+        "redGoldPerMin" : [df[5:10]['goldPerMin'].sum()],
+        "blueTotalExperience" : [df[0:5]['xpPerMin'].sum() * 10],
+        "redTotalExperience" : [df[5:10]['xpPerMin'].sum() * 10],
+        "blueExperienceDiff" : 0,
+        "redExperienceDiff" : 0,
+        "blueWins": [df[0:5]['win'].mean()]
+    })
+
+
+    df2['blueExperienceDiff'] = df2['blueTotalExperience'] - df2['redTotalExperience']
+    df2['redExperienceDiff'] = df2['redTotalExperience'] - df2['blueTotalExperience']
+
+
+
+
+    print(df2.to_string())
     
-df = pd.DataFrame(participants)
-
-
-
-df2 = pd.DataFrame({
-    "blueFirstBlood" : [df[0:5]['FirstBlood'].max()],
-    "redFirstBlood" : [df[5:10]['FirstBlood'].max()],
-    "blueCSPerMin" : [df[0:5]['csPerMinute'].sum()],
-    "redCSPerMin" : [df[5:10]['csPerMinute'].sum()],
-    "blueGoldPerMin" : [df[0:5]['goldPerMin'].sum()],
-    "redGoldPerMin" : [df[5:10]['goldPerMin'].sum()],
-    "blueTotalExperience" : [df[0:5]['xpPerMin'].sum() * 10],
-    "redTotalExperience" : [df[5:10]['xpPerMin'].sum() * 10],
-    "blueExperienceDiff" : 0,
-    "redExperienceDiff" : 0,
-    "blueWins": [df[0:5]['win'].mean()]
-})
-
-
-df2['blueExperienceDiff'] = df2['blueTotalExperience'] - df2['redTotalExperience']
-df2['redExperienceDiff'] = df2['redTotalExperience'] - df2['blueTotalExperience']
-
-
-
-
-print(df[0:5]['FirstBlood'].to_string())
+ten_minute_data('euro gigolo')
