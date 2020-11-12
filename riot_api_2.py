@@ -70,10 +70,3 @@ def ten_minute_data(username):
 
     df2['blueExperienceDiff'] = df2['blueTotalExperience'] - df2['redTotalExperience']
     df2['redExperienceDiff'] = df2['redTotalExperience'] - df2['blueTotalExperience']
-
-
-
-
-    print(df2.to_string())
-    
-ten_minute_data('euro gigolo')
