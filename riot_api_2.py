@@ -4,6 +4,8 @@ from riotwatcher import LolWatcher, ApiError
 from pprint import pprint
 import pandas as pd
 import statistics
+import sklearn.datasets
+import os
 
 key = 'RGAPI-ae57350a-573b-411a-8b72-2b32d30f5ae9'
 match_id = '3648293057'
@@ -12,7 +14,7 @@ my_region = 'na1'
 #platform_host = 'na1.api.riotgames.com'
 #region_host = 'americas.api.riotgames.com'
 
-
+os.chdir(os.path.dirname(__file__))
 
 #pulls a players stats by username/region
 def ten_minute_data(username):
@@ -70,3 +72,38 @@ def ten_minute_data(username):
 
     df2['blueExperienceDiff'] = df2['blueTotalExperience'] - df2['redTotalExperience']
     df2['redExperienceDiff'] = df2['redTotalExperience'] - df2['blueTotalExperience']
+
+
+    league_df = pd.read_csv(os.path.join("high_diamond_ranked_10min.csv"))
+
+    target = league_df["blueWins"]
+    data = league_df[["blueFirstBlood", "blueExperienceDiff", "blueGoldPerMin", "redGoldPerMin", "blueCSPerMin", "redCSPerMin"]]
+
+    from sklearn.model_selection import train_test_split
+    X_train, X_test, y_train, y_test = train_test_split(data, target, random_state=42)
+
+    from sklearn.ensemble import RandomForestClassifier
+    rf = RandomForestClassifier(n_estimators=200)
+    rf = rf.fit(X_train, y_train)
+    #print(rf.score(X_test, y_test))
+    win = df2["blueWins"]
+    if win[0] == 1.0:
+        #print("yes")
+        if rf.score(df2[["blueFirstBlood", "blueExperienceDiff", "blueGoldPerMin", "redGoldPerMin", "blueCSPerMin", "redCSPerMin"]], df2["blueWins"]) == 1.0:
+            return("Blue won the match and the prediction was correct.")
+        else:
+            return("Blue won the match and the prediction was incorrect.")
+    else:
+        if rf.score(df2[["blueFirstBlood", "blueExperienceDiff", "blueGoldPerMin", "redGoldPerMin", "blueCSPerMin", "redCSPerMin"]], df2["blueWins"]) == 1.0:
+            return("Red won the match and the prediction was correct.")
+        else:
+            return("Red won the match and the prediction was incorrect.")
+    #print(win[0])
+    # if df2["blueWins"].any == 0:
+    #     print("yes")
+    #return(str((rf.score(df2[["blueFirstBlood", "blueExperienceDiff", "blueGoldPerMin", "redGoldPerMin", "blueCSPerMin", "redCSPerMin"]], df2["blueWins"]))))
+
+
+
+
+ten_minute_data("VIMT")
