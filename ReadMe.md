@@ -1,6 +1,7 @@
 <h1>LEAGUE OF MACHINE LEARNING</h1>
 
 Here machine learning will be used to create a predictive model for determining the outcome of the popular online videogame 'League of Legends'
+Run the live version here: https://bonem97.github.io/league-of-machine-learning/html_files/
 
 ---------Contributors---------
 
